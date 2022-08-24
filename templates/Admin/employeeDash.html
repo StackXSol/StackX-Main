@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{data["empid"]}}</title>
+
+    <style>
+        .but{
+            background-color: lightblue; border: none; padding: 12px; border-radius:10px; font-size:large
+        }
+
+        .but1{
+            background-color: rgb(202, 235, 159); border: none; padding: 10px; border-radius:10px; font-size:large; border:solid
+        }
+
+        .but2{
+            background-color: rgb(235, 179, 159); border: none; padding: 10px; border-radius:10px; font-size:medium; border:solid
+        }
+    </style>
+</head>
+<body style="margin: 20px;">
+    <h2>{{data["empid"]}} ({{data["Name"]}})</h2>
+    <div style="display: inline-block;">
+        <button class="but">
+            Rs. {{data["stipend"]}}
+        </button>
+        <button class="but">
+            Rs. {{data["incentives"]}}
+        </button>
+        <button class="but">
+            {{data["status"]}}
+        </button>
+    </div>
+
+    <br>
+    <br>
+    
+
+    <div style="display: inline-block;">
+        <button class="but1">
+            Push Stipend
+        </button>
+        <button class="but1">
+            Assign Project
+        </button>
+        <button class="but1">
+            Projects
+        </button>
+    </div>
+
+    <br>
+    <br>
+
+
+    <div style="display: inline-block;">
+        <button class="but2">
+            Push Incentive
+        </button>
+        <button class="but2">
+            Add Certificate
+        </button>
+       
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Employees</title>
+</head>
+<body>
+    {% for element in collection %}
+    <div style="border:solid; margin: 10px; margin-right:10px; display: inline-block; padding:10px; border-radius:10px">
+        <h2>{{element["empId"]}}</h2>
+        <p>{{element["name"]}}</p>
+        <p>End Date: {{element["internshipEnd"]}}</p>
+        <a href="/admin/manage/{{element["empId"]}}">
+            <button>
+                Manage
+            </button>
+        </a>
+    </div>
+    {% endfor %}
+    
+  
+</body>
+</html>

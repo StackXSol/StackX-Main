@@ -1,9 +1,14 @@
+from datetime import datetime
 from heapq import merge
+from mimetypes import init
 from random import Random
 import random
+from sqlite3 import Date
 from turtle import pd
 from flask import Flask, redirect,render_template,request
 import smtplib
+
+
 import firebase_admin
 from firebase_admin import firestore,credentials, storage
 
@@ -12,6 +17,9 @@ from fpdf import FPDF
 
 
 app = Flask(__name__)
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 
 cred = credentials.Certificate('firebase.json')
 firebase_db = firebase_admin.initialize_app(cred,{
@@ -19,6 +27,8 @@ firebase_db = firebase_admin.initialize_app(cred,{
   'storageBucket': 'stackx-24edc.appspot.com'
 })
 db = firestore.client()
+
+
 
 def generateOL(id, name, start, end, stipend, till, field):
     class PDF(FPDF):
@@ -94,6 +104,7 @@ def send_email(user, pwd, recipient, subject, body):
     
 
 @app.route("/")
+
 def index():
     return render_template("index.html")
 
@@ -127,7 +138,11 @@ def send_query():
         return redirect("/")
     return redirect("/")
 
-#admin Url's
+#admin Url's 
+
+
+
+
 
 @app.route("/admin")
 def admin():
@@ -138,6 +153,7 @@ def admin_login():
     email = request.form["email"]
     password = request.form["password"]
     if(email=="stackx1617@gmail.com" and password=="StackX"):
+        
         return render_template("Admin/homePage.html")
     else:
        return redirect("/admin")
@@ -155,17 +171,33 @@ def add_employee():
     till = request.form["till"]
     field = request.form["field"]
     stipend = request.form["stipend"]
-    id = random.randint(1000000, 9999999)
-   
+    id = random.randint(1000000, 9999999)  
     generateOL(str(id),name,start,end,stipend,till,field)
     bucket = storage.bucket()     
     blob = bucket.blob(str(id))
     blob.upload_from_filename("IOL.pdf")
     blob.make_public()
-    db.collection("EmployeeID").document(str(id)).set({"currentProject": "No Project", "empId":str(id),"incentivePaid":str(0),"internshipEnd":str(end),"internshipStart":str(start),"internshipofferLetter":blob.public_url,"name":str(name),"paidStipened":str(0),"stipened":stipend,"timePeriod":"2022-08-10","unpaidStipened":str(stipend*3),"projectDone":[]},merge=True)
-    
+    db.collection("EmployeeID").document(str(id)).set({"currentProject": "No Project", "empId":str(id),"incentivePaid":str(0),"internshipEnd":str(end),"internshipStart":str(start),"internshipofferLetter":blob.public_url,"name":str(name),"paidStipened":str(0),"stipened":stipend,"email":email,"timePeriod":str(Date.today()),"unpaidStipened":str(int(stipend)*3),"projectDone":[]},merge=True)
+    return redirect("/adminlogin")
 
-    return redirect("/admin")
+@app.route("/admin/manage")
+
+def employees():
+    if login_manager.unauthorized:
+        print("aunauth")
+    employees = []
+    for i in db.collection("EmployeeID").get():
+        employees.append(i.to_dict())
+    return render_template("Admin/employees.html", collection = employees)
+
+@app.route("/admin/manage/<empid>")
+def manageEmployee(empid):
+    key = db.collection("EmployeeID").document(empid).get()
+    data = key.to_dict()
+    print(data)
+    data_set = {"empid":data["empId"],"stipend":data["stipened"],"incentives":data["incentivePaid"],"status":"Active", "Name":data["name"]}
+    return render_template("Admin/employeeDash.html", data = data_set)
+    
 
 
 if __name__ == '__main__':
