@@ -9,6 +9,7 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
+    <link rel="shortcut icon" href="./../static/images/StackX.png" type="image/x-icon">  
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -21,12 +22,47 @@
             }
         }
     </script>
+    <style>
+        .mcs{
+            border: solid;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 30px;
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+     
+        
+    </style>
     <title>Admin Homepage</title>
 </head>
 
 <body>
 
-    <section class="text-gray-600 body-font">
+    <div class="mcs" >
+        <img height="200px" width="600px" src="https://assets-global.website-files.com/61766c42e8e50c99a04fbd4b/6179a7473854b15e11196ea6_shutterstock_1389455627.jpeg" alt="">
+        <br>
+        <form action="/admin/add" method="POST">
+            <h1>Add Employee</h1>
+            <br>
+            <button style="background-color: lightblue; border: none; padding: 12px; border-radius:10px; font-size:large" type="submit">Add</button>
+        </form>
+    </div>
+
+    <div class="mcs">
+        <img height="200px" width="600px" src="https://assets-global.website-files.com/61766c42e8e50c99a04fbd4b/61799eaf4b05a17ba8d10e5b_shutterstock_1357446050.jpeg" alt="">
+        <br>
+        <form action="/admin/manage">
+            <h1>Manage Employees</h1>
+            <br>
+            <button style="background-color: lightblue; border: none; padding: 12px; border-radius:10px; font-size:large" type="submit">Manage</button>
+        </form>
+    </div>
+
+
+
+    <!-- <section class="text-gray-600 body-font">
         <div class="container px-5 py-24 mx-auto">
             <form class="flex flex-wrap -mx-4 -mb-10 text-center" action="/admin/add" method="POST">
                 <div >
@@ -59,7 +95,7 @@
                 </div>
            
         </div>
-    </section>
+    </section> -->
 
 </body>
 

@@ -5,20 +5,18 @@ from random import Random
 import random
 from sqlite3 import Date
 from turtle import pd
-from flask import Flask, redirect,render_template,request
+from flask import Flask, redirect,render_template,request, session
 import smtplib
-
-
 import firebase_admin
+from flask_session import Session
 from firebase_admin import firestore,credentials, storage
-
 
 from fpdf import FPDF
 
-
 app = Flask(__name__)
-login_manager = LoginManager()
-login_manager.init_app(app)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 
 cred = credentials.Certificate('firebase.json')
@@ -27,7 +25,6 @@ firebase_db = firebase_admin.initialize_app(cred,{
   'storageBucket': 'stackx-24edc.appspot.com'
 })
 db = firestore.client()
-
 
 
 def generateOL(id, name, start, end, stipend, till, field):
@@ -140,10 +137,6 @@ def send_query():
 
 #admin Url's 
 
-
-
-
-
 @app.route("/admin")
 def admin():
     return render_template("Admin/login.html")
@@ -153,7 +146,7 @@ def admin_login():
     email = request.form["email"]
     password = request.form["password"]
     if(email=="stackx1617@gmail.com" and password=="StackX"):
-        
+        session["auth"] = True
         return render_template("Admin/homePage.html")
     else:
        return redirect("/admin")
@@ -181,22 +174,62 @@ def add_employee():
     return redirect("/adminlogin")
 
 @app.route("/admin/manage")
-
-def employees():
-    if login_manager.unauthorized:
-        print("aunauth")
-    employees = []
-    for i in db.collection("EmployeeID").get():
-        employees.append(i.to_dict())
-    return render_template("Admin/employees.html", collection = employees)
+def employees():   
+    if(session.get("auth")==True):
+        employees = []
+        for i in db.collection("EmployeeID").get():
+            employees.append(i.to_dict())
+        return render_template("Admin/employees.html", collection = employees)
+    return redirect("/admin")
 
 @app.route("/admin/manage/<empid>")
-def manageEmployee(empid):
-    key = db.collection("EmployeeID").document(empid).get()
-    data = key.to_dict()
-    print(data)
-    data_set = {"empid":data["empId"],"stipend":data["stipened"],"incentives":data["incentivePaid"],"status":"Active", "Name":data["name"]}
-    return render_template("Admin/employeeDash.html", data = data_set)
+def manageEmployee(empid):   
+    if(session.get("auth")==True):
+        key = db.collection("EmployeeID").document(empid).get()
+        data = key.to_dict()        
+        data_set = {"empid":data["empId"],"stipend":data["stipened"],"incentives":data["incentivePaid"],"status":"Active", "Name":data["name"]}
+        return render_template("Admin/employeeDash.html", data = data_set, projects = data["projectDone"])
+    return redirect("/admin")
+
+#employee funcs
+
+@app.route("/admin/addstipend/<empid>/<stipend>")
+def addStipend(empid,stipend):
+    if(session.get("auth")==True):
+        key = db.collection("EmployeeID").document(empid).get()
+        data = key.to_dict()
+        if(int(data["unpaidStipened"])>=int(stipend)):
+            new_bal = int(data["paidStipened"])+int(stipend)
+            new_left = int(data["unpaidStipened"])-int(stipend)
+            db.collection("EmployeeID").document(empid).set({"paidStipened": new_bal,"unpaidStipened":new_left},merge=True)
+        return redirect("/admin/manage/{0}".format(empid))
+    return redirect("/admin")
+
+@app.route("/admin/addincentive/<empid>/<incentive>")
+def addIncentive(empid,incentive):    
+    if(session.get("auth")==True):
+        key = db.collection("EmployeeID").document(empid).get()
+        data = key.to_dict()        
+        new_bal = int(data["incentivePaid"])+int(incentive)            
+        db.collection("EmployeeID").document(empid).set({"incentivePaid": new_bal},merge=True)
+        return redirect("/admin/manage/{0}".format(empid))
+    return redirect("/admin")
+
+@app.route("/admin/assignProject/<empid>", methods=["POST"])
+def assignProject(empid):
+    if(session.get("auth")):
+        key = db.collection("EmployeeID").document(empid).get()
+        data = key.to_dict()  
+        previous_project = {"projectName": data["currentProject"], "timePeriod":data["timePeriod"]}
+        project = request.form["project"]
+        deadline = request.form["deadline"]
+        db.collection("EmployeeID").document(empid).update({"projectDone":firestore.ArrayUnion([previous_project])})
+        db.collection("EmployeeID").document(empid).set({"currentProject":project, "timePeriod":deadline},merge=True)
+        return redirect("/admin/manage/{0}".format(empid))
+    return redirect("/admin")
+
+    
+    
     
 
 

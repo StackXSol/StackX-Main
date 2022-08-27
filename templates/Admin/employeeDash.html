@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="./../static/images/StackX.png" type="image/x-icon">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{data["empid"]}}</title>
 
@@ -39,12 +40,9 @@
     
 
     <div style="display: inline-block;">
-        <button class="but1">
+        <a href="/admin/addstipend/{{data["empid"]}}/{{data["stipend"]}}"><button class="but1">
             Push Stipend
-        </button>
-        <button class="but1">
-            Assign Project
-        </button>
+        </button></a>        
         <button class="but1">
             Projects
         </button>
@@ -55,12 +53,41 @@
 
 
     <div style="display: inline-block;">
-        <button class="but2">
+        <a href="/admin/addincentive/{{data["empid"]}}/2000"><button class="but2">
             Push Incentive
-        </button>
+        </button></a>
         <button class="but2">
             Add Certificate
         </button>
+       
+    </div>
+
+    <br>
+    <hr>
+    
+
+
+    <div>
+        <h2>Assign Project</h2>
+        <form action="/admin/assignProject/{{data["empid"]}}" method="post">
+            <input name="project" style="border: solid; padding:10px; border-radius:10px" type="text" placeholder="Project">
+            <input name="deadline" style="border: solid; padding:10px; border-radius:10px" type="text" placeholder="DeadLine (yyyy-mm-dd)">
+            <button class="but" type="submit">Assign</button>
+        </form>       
+    </div>
+
+    <br>
+    <hr>
+
+    <div>
+        <h2>Completed Projects</h2>
+        {% for element in projects %}
+        <div style="border: solid; border-radius:10px; padding:10px; margin-right:10px; display: inline-block;" >
+            <h2>{{element["projectName"]}}</h2>
+            <h4>{{element["timePeriod"]}}</h4>
+        </div>
+        {% endfor %}
+        
        
     </div>
     
