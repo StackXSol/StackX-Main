@@ -171,7 +171,7 @@ def add_employee():
     blob.upload_from_filename("IOL.pdf")
     blob.make_public()
     db.collection("EmployeeID").document(str(id)).set({"currentProject": "No Project", "empId":str(id),"incentivePaid":str(0),"internshipEnd":str(end),"internshipStart":str(start),"internshipofferLetter":blob.public_url,"name":str(name),"paidStipened":str(0),"stipened":stipend,"email":email,"timePeriod":str(Date.today()),"unpaidStipened":str(int(stipend)*3),"projectDone":[]},merge=True)
-    return redirect("/adminlogin")
+    return redirect("/admin")
 
 @app.route("/admin/manage")
 def employees():   
