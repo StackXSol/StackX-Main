@@ -78,7 +78,7 @@ def generateOL(id, name, start, end, stipend, till, field):
     pdf.multi_cell(h=4.0, align='L', w=0, txt="", border=0)   
     pdf.set_font('Times', '', 14)
     pdf.multi_cell(h=6.0, align='L', w=0, txt="Please confirm your acceptance of the terms of this offer by {0} failing which, we have the right to cancel the internship. We look forward to having you on our team! If you have any questions, please feel free to reach out to us.".format(till), border=0)
-    pdf.output('IOL.pdf', 'F')
+    pdf.output('pdfs/IOL.pdf', 'F')
 
 host_mail = "mail.stackx.online"
 sender_email = "info@stackx.online"
@@ -168,7 +168,7 @@ def add_employee():
     generateOL(str(id),name,start,end,stipend,till,field)
     bucket = storage.bucket()     
     blob = bucket.blob(str(id))
-    blob.upload_from_filename("IOL.pdf")
+    blob.upload_from_filename("./pdfs/IOL.pdf")
     blob.make_public()
     db.collection("EmployeeID").document(str(id)).set({"currentProject": "No Project", "empId":str(id),"incentivePaid":str(0),"internshipEnd":str(end),"internshipStart":str(start),"internshipofferLetter":blob.public_url,"name":str(name),"paidStipened":str(0),"stipened":stipend,"email":email,"timePeriod":str(Date.today()),"unpaidStipened":str(int(stipend)*3),"projectDone":[]},merge=True)
     return redirect("/admin")
