@@ -4,7 +4,6 @@ from mimetypes import init
 from random import Random
 import random
 from sqlite3 import Date
-from turtle import pd
 from flask import Flask, redirect,render_template,request, session
 import smtplib
 import firebase_admin
